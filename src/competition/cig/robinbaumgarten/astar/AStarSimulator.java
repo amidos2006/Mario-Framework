@@ -234,8 +234,8 @@ public class AStarSimulator
     private int getMarioDamage()
     {
     	// early damage at gaps: Don't even fall 1 px into them.
-    	if (levelScene.level.isGap[(int) (levelScene.mario.x/16)] &&
-    			levelScene.mario.y > levelScene.level.gapHeight[(int) (levelScene.mario.x/16)]*16)
+    	if (levelScene.level.isGap[Math.max(0, (int) (levelScene.mario.x/16))] &&
+    			levelScene.mario.y > levelScene.level.gapHeight[Math.max(0, (int) (levelScene.mario.x/16))]*16)
     	{
     		//System.out.println("Gap height: "+levelScene.level.gapHeight[(int) (levelScene.mario.x/16)]);
     		levelScene.mario.damage+=5;
@@ -306,7 +306,7 @@ public class AStarSimulator
     		{
     			bestPosition = current;
     			if (current.sceneSnapshot.mario.x > furthestPosition.sceneSnapshot.mario.x
-    					&& !levelScene.level.isGap[(int)(current.sceneSnapshot.mario.x/16)])
+    					&& !levelScene.level.isGap[Math.max(0, (int)(current.sceneSnapshot.mario.x/16))])
     					//&& current.sceneSnapshot.mario.isOnGround())
     				furthestPosition = current;
     		}
@@ -314,7 +314,7 @@ public class AStarSimulator
     	if (levelScene.mario.x - currentSearchStartingMarioXPos < maxRight
     			&& furthestPosition.sceneSnapshot.mario.x > bestPosition.sceneSnapshot.mario.x + 20
     			&& (levelScene.mario.fire ||
-    					levelScene.level.isGap[(int)(bestPosition.sceneSnapshot.mario.x/16)]))
+    					levelScene.level.isGap[Math.max(0, (int)(bestPosition.sceneSnapshot.mario.x/16))]))
     	{
     		// Couldnt plan till end of screen, take furthest
     		//System.out.println("Furthest: "+ furthestPosition.sceneSnapshot.mario.x + " best: "+ bestPosition.sceneSnapshot.mario.x);
@@ -451,7 +451,7 @@ public class AStarSimulator
     		//if (current.action[Mario.KEY_JUMP]) jumpModifier = -0.0001f;
     		if (current.sceneSnapshot != null)
     		{
-    			int marioX = (int) current.sceneSnapshot.mario.x / 16;
+    			int marioX = Math.max(0, (int) current.sceneSnapshot.mario.x / 16);
     			if (current.sceneSnapshot.level.isGap.length > marioX && current.sceneSnapshot.level.isGap[marioX])
     			{
     				//if (current.action[Mario.KEY_JUMP])

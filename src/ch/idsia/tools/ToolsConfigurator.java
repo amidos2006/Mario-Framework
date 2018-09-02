@@ -96,18 +96,24 @@ public class ToolsConfigurator extends JFrame
 //        frame.setLocation((screenSize.width-frame.getWidth())/2, (screenSize.height-frame.getHeight())/2);        
         if (marioComponentFrame == null)
         {
-            marioComponentFrame = new JFrame(/*evaluationOptions.getAgentName() +*/ "Mario Intelligent 2.0");
+            if(GlobalOptions.VisualizationOn) {
+        	marioComponentFrame = new JFrame(/*evaluationOptions.getAgentName() +*/ "Mario Intelligent 2.0");
+            }
             marioComponent = new MarioComponent(320, 240);
-            marioComponentFrame.setContentPane(marioComponent);
-            marioComponent.init();
-            marioComponentFrame.pack();
-            marioComponentFrame.setResizable(false);
-            marioComponentFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            if(GlobalOptions.VisualizationOn) {
+                marioComponentFrame.setContentPane(marioComponent);
+                marioComponentFrame.pack();
+                marioComponentFrame.setResizable(false);
+                marioComponentFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                marioComponent.init();
+            }
         }
 //        marioComponentFrame.setTitle(evaluationOptions.getAgent().getName() + " - Mario Intelligent 2.0");
-        marioComponentFrame.setAlwaysOnTop(evaluationOptions.isViewAlwaysOnTop());
-        marioComponentFrame.setLocation(evaluationOptions.getViewLocation());
-        marioComponentFrame.setVisible(evaluationOptions.isVisualization());
+        if(GlobalOptions.VisualizationOn) {
+            marioComponentFrame.setAlwaysOnTop(evaluationOptions.isViewAlwaysOnTop());
+            marioComponentFrame.setLocation(evaluationOptions.getViewLocation());
+            marioComponentFrame.setVisible(evaluationOptions.isVisualization());
+        }
     }
 
     enum INTERFACE_TYPE {CONSOLE, GUI}
@@ -420,7 +426,7 @@ public class ToolsConfigurator extends JFrame
             {
                 LOGGER.println("Vizualization " + (CheckboxShowVizualization.getState() ? "On" : "Off"),
                         LOGGER.VERBOSE_MODE.INFO );
-                GlobalOptions.VisualizationOn = CheckboxShowVizualization.getState();
+//                GlobalOptions.VisualizationOn = CheckboxShowVizualization.getState();
                 marioComponentFrame.setVisible(GlobalOptions.VisualizationOn);
             }
             else if (ob == CheckboxMaximizeFPS)

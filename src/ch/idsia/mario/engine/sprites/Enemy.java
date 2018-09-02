@@ -167,6 +167,9 @@ public class Enemy extends Sprite
                     world.addSprite(new Sparkle((int) (x + Math.random() * 16 - 8) + 4, (int) (y - Math.random() * 8) + 4, (float) (Math.random() * 2 - 1), (float) Math.random() * -1, 0, 1, 5));
                 }
                 spriteContext.removeSprite(this);
+                if(this.mapY >= this.world.level.height && this.mapX >= 0 && this.mapX <= this.world.level.width) {
+            		LevelScene.killedCreaturesTotal += 1;
+                }
             }
 
             if (flyDeath)
@@ -177,6 +180,9 @@ public class Enemy extends Sprite
                 ya += 1;
             }
             return;
+        }
+        else if(this.mapY >= this.world.level.height){
+            deadTime = 10;
         }
 
 

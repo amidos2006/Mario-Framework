@@ -15,7 +15,8 @@ public class GlobalOptions {
     public static int InfiniteFPS = 100;
     public static boolean pauseWorld = false;
 
-    public static boolean VisualizationOn = true;
+    public static boolean VisualizationOn = false;
+    public static boolean MarioCeiling = false;
     public static boolean GameVeiwerOn = true;
 
 

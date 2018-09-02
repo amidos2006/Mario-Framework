@@ -1,6 +1,7 @@
 package ch.idsia.ai.tasks;
 
 import ch.idsia.ai.agents.Agent;
+import ch.idsia.mario.engine.level.Level;
 import ch.idsia.tools.EvaluationInfo;
 import ch.idsia.tools.EvaluationOptions;
 import ch.idsia.tools.Evaluator;
@@ -23,11 +24,15 @@ public class ProgressTask implements Task {
     }
 
     public double[] evaluate(Agent controller) {
+	return this.evaluate(controller, null);
+    }
+    
+    public double[] evaluate(Agent controller, Level lvl) {
         double distanceTravelled = 0;
 //        controller.reset();
         options.setAgent(controller);
         Evaluator evaluator = new Evaluator(options);
-        List<EvaluationInfo> results = evaluator.evaluate();
+        List<EvaluationInfo> results = evaluator.evaluate(lvl);
         for (EvaluationInfo result : results) {
             //if (result.marioStatus == Mario.STATUS_WIN )
             //    Easy.save(options.getAgent(), options.getAgent().getName() + ".xml");

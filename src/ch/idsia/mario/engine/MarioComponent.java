@@ -16,6 +16,7 @@ import java.awt.event.FocusListener;
 import java.awt.event.KeyAdapter;
 import java.awt.image.VolatileImage;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -88,9 +89,7 @@ public class MarioComponent extends JComponent implements Runnable, /*KeyListene
 
     public void init() {
         graphicsConfiguration = getGraphicsConfiguration();
-//        if (graphicsConfiguration != null) {
-            Art.init(graphicsConfiguration);
-//        }
+        Art.init(graphicsConfiguration);
     }
 
     public void start() {
@@ -113,20 +112,21 @@ public class MarioComponent extends JComponent implements Runnable, /*KeyListene
         running = true;
         adjustFPS();
         EvaluationInfo evaluationInfo = new EvaluationInfo();
-
+        
         VolatileImage image = null;
         Graphics g = null;
         Graphics og = null;
-
-        image = createVolatileImage(320, 240);
-        g = getGraphics();
-        og = image.getGraphics();
-
-        if (!GlobalOptions.VisualizationOn) {
-            String msgClick = "Vizualization is not available";
-            drawString(og, msgClick, 160 - msgClick.length() * 4, 110, 1);
-            drawString(og, msgClick, 160 - msgClick.length() * 4, 110, 7);
+        if(GlobalOptions.VisualizationOn) {
+            image = createVolatileImage(320, 240);
+            g = getGraphics();
+            og = image.getGraphics();
         }
+
+//        if (!GlobalOptions.VisualizationOn) {
+//            String msgClick = "Vizualization is not available";
+//            drawString(og, msgClick, 160 - msgClick.length() * 4, 110, 1);
+//            drawString(og, msgClick, 160 - msgClick.length() * 4, 110, 7);
+//        }
 
         addFocusListener(this);
 
@@ -253,11 +253,36 @@ public class MarioComponent extends JComponent implements Runnable, /*KeyListene
         evaluationInfo.timeLeft = levelScene.getTimeLeft();
         evaluationInfo.totalTimeGiven = levelScene.getTotalTime();
         evaluationInfo.numberOfGainedCoins = Mario.coins;
-//        evaluationInfo.totalNumberOfCoins   = -1 ; // TODO: total Number of coins.
+        evaluationInfo.totalNumberOfCoins   = LevelScene.totalNumberOfCoins;
         evaluationInfo.totalActionsPerfomed = totalActionsPerfomed; // Counted during the play/simulation process
         evaluationInfo.totalFramesPerfomed = frame;
         evaluationInfo.marioMode = mario.getMode();
-        evaluationInfo.killsTotal = mario.world.killedCreaturesTotal;
+        evaluationInfo.shellKills = LevelScene.killedCreaturesByShell;
+        evaluationInfo.stompKills = LevelScene.killedCreaturesByStomp;
+        evaluationInfo.fireKills = LevelScene.killedCreaturesByFireBall;
+        evaluationInfo.totalKills = LevelScene.killedCreaturesTotal;
+        evaluationInfo.numOfJumps = LevelScene.longJump.size();
+        LevelScene.airTime.remove(0);
+        Float[] airTime = LevelScene.airTime.toArray(new Float[0]);
+        Arrays.sort(airTime);
+        if(airTime.length > 0) {
+            evaluationInfo.airTime = airTime[airTime.length - 1];
+        }
+        Float[] jumpDistance = LevelScene.longJump.toArray(new Float[0]);
+        Arrays.sort(jumpDistance);
+        if(jumpDistance.length > 0) {
+            evaluationInfo.jumpDistance = jumpDistance[jumpDistance.length - 1];
+        }
+//        System.out.println("Kills by Falling: " + (LevelScene.killedCreaturesTotal - LevelScene.killedCreaturesByStomp - 
+//        	LevelScene.killedCreaturesByShell - LevelScene.killedCreaturesByFireBall));
+//       System.out.println("Air Time: " + LevelScene.airTime.size());
+//       for(float v:airTime) {
+//	   System.out.println("\t" + v);
+//       }
+//       System.out.println("Long Jump: " + LevelScene.longJump.size());
+//       for(float v:LevelScene.longJump) {
+//	   System.out.println("\t" + v);
+//       }
 //        evaluationInfo.Memo = "Number of attempt: " + Mario.numberOfAttempts;
         if (agent instanceof ServerAgent && mario.keys != null /*this will happen if client quits unexpectedly in case of Server mode*/)
             ((ServerAgent)agent).integrateEvaluationInfo(evaluationInfo);

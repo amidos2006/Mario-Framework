@@ -27,6 +27,8 @@ public class LevelScene extends Scene implements SpriteContext
     public float xCam, yCam, xCamO, yCamO;
     public static Image tmpImage;
     private int tick;
+    private int width = 320;
+    private int height = 240;
 
     private LevelRenderer layer;
     private BgRenderer[] bgLayer = new BgRenderer[2];
@@ -55,6 +57,9 @@ public class LevelScene extends Scene implements SpriteContext
     public static int killedCreaturesByFireBall;
     public static int killedCreaturesByStomp;
     public static int killedCreaturesByShell;
+    public static int totalNumberOfCoins;
+    public static ArrayList<Float> airTime;
+    public static ArrayList<Float> longJump;
 
     private static String[] LEVEL_TYPES = {"Overground(0)",
                                            "Underground(1)",
@@ -73,6 +78,18 @@ public class LevelScene extends Scene implements SpriteContext
         killedCreaturesByFireBall = 0;
         killedCreaturesByStomp = 0;
         killedCreaturesByShell = 0;
+        if(airTime == null) {
+            airTime = new ArrayList<Float>();
+        }
+        else {
+            airTime.clear();
+        }
+        if(longJump == null) {
+            longJump = new ArrayList<Float>();
+        }
+        else {
+            longJump.clear();
+        }
     }
 
     private String mapElToStr(int el)
@@ -625,7 +642,7 @@ public class LevelScene extends Scene implements SpriteContext
         paused = false;
         Sprite.spriteContext = this;
         sprites.clear();
-        layer = new LevelRenderer(level, graphicsConfiguration, 320, 240);
+        layer = new LevelRenderer(level, graphicsConfiguration, this.width, this.height);
         for (int i = 0; i < 2; i++)
         {
             int scrollSpeed = 4 >> i;
@@ -673,15 +690,16 @@ public class LevelScene extends Scene implements SpriteContext
 
         paused = false;
         Sprite.spriteContext = this;
-        sprites.clear();
-        layer = new LevelRenderer(level, graphicsConfiguration, 320, 240);
-        for (int i = 0; i < 2; i++)
-        {
-            int scrollSpeed = 4 >> i;
-            int w = ((level.width * 16) - 320) / scrollSpeed + 320;
-            int h = ((level.height * 16) - 240) / scrollSpeed + 240;
-            Level bgLevel = BgLevelGenerator.createLevel(w / 32 + 1, h / 32 + 1, i == 0, levelType);
-            bgLayer[i] = new BgRenderer(bgLevel, graphicsConfiguration, 320, 240, scrollSpeed);
+        if(GlobalOptions.VisualizationOn) {
+            layer = new LevelRenderer(level, graphicsConfiguration, 320, 240);
+            for (int i = 0; i < 2; i++)
+            {
+                int scrollSpeed = 4 >> i;
+                int w = ((level.width * 16) - 320) / scrollSpeed + 320;
+                int h = ((level.height * 16) - 240) / scrollSpeed + 240;
+                Level bgLevel = BgLevelGenerator.createLevel(w / 32 + 1, h / 32 + 1, i == 0, levelType);
+                bgLayer[i] = new BgRenderer(bgLevel, graphicsConfiguration, 320, 240, scrollSpeed);
+            }
         }
         mario = new Mario(this);
         sprites.add(mario);
@@ -785,8 +803,8 @@ public class LevelScene extends Scene implements SpriteContext
             boolean hasShotCannon = false;
             int xCannon = 0;
 
-            for (int x = (int) xCam / 16 - 1; x <= (int) (xCam + layer.width) / 16 + 1; x++)
-                for (int y = (int) yCam / 16 - 1; y <= (int) (yCam + layer.height) / 16 + 1; y++)
+            for (int x = (int) xCam / 16 - 1; x <= (int) (xCam + this.width) / 16 + 1; x++)
+                for (int y = (int) yCam / 16 - 1; y <= (int) (yCam + this.height) / 16 + 1; y++)
                 {
                     int dir = 0;
 
@@ -973,9 +991,9 @@ public class LevelScene extends Scene implements SpriteContext
 
         if (startTime > 0)
         {
-            float t = startTime + alpha - 2;
-            t = t * t * 0.6f;
-            renderBlackout(g, 160, 120, (int) (t));
+//            float t = startTime + alpha - 2;
+//            t = t * t * 0.6f;
+//            renderBlackout(g, 160, 120, (int) (t));
         }
 //        mario.x>level.xExit*16
         if (mario.winTime > 0)
@@ -990,7 +1008,7 @@ public class LevelScene extends Scene implements SpriteContext
 //                init();
             }
 
-            renderBlackout(g, mario.xDeathPos - xCam, mario.yDeathPos - yCam, (int) (320 - t));
+//            renderBlackout(g, mario.xDeathPos - xCam, mario.yDeathPos - yCam, (int) (320 - t));
         }
 
         if (mario.deathTime > 0)

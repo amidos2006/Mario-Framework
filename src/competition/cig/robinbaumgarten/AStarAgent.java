@@ -30,17 +30,17 @@ public class AStarAgent implements Agent
 		//sim = new NoBButtonMario();
 	}
 
-	public void printLevel(byte[][] levelScene)
-	{
-		for (int i = 0; i < levelScene.length; i++)
-		{
-			for (int j = 0; j < levelScene[i].length; j++)
-			{
-				System.out.print(levelScene[i][j]+"\t");
-			}
-			System.out.println("");
-		}
-	}
+//	public void printLevel(byte[][] levelScene)
+//	{
+//		for (int i = 0; i < levelScene.length; i++)
+//		{
+//			for (int j = 0; j < levelScene[i].length; j++)
+//			{
+//				System.out.print(levelScene[i][j]+"\t");
+//			}
+//			System.out.println("");
+//		}
+//	}
 
 	public boolean[] getAction(Environment observation)
 	{

@@ -1,6 +1,5 @@
 package ch.idsia.tools;
 
-import Evolution.generator.Chromosome;
 import ch.idsia.ai.agents.Agent;
 import ch.idsia.ai.tasks.ProgressTask;
 import ch.idsia.mario.simulation.BasicSimulator;
@@ -12,6 +11,7 @@ import competition.cig.robinbaumgarten.LimitedJumpAgent;
 import competition.cig.robinbaumgarten.EnemyBlindAgent;
 import competition.cig.robinbaumgarten.NoBButtonAgent;
 import ch.idsia.tools.CmdLineOptions;
+import ch.idsia.mario.engine.GlobalOptions;
 import ch.idsia.mario.engine.level.Level;
 import java.util.Random;
 import ch.idsia.ai.tasks.ProgressTask;
@@ -19,18 +19,13 @@ import ch.idsia.ai.tasks.Task;
 
 
 public class RunGivenLevel {
-
-
     public Agent perfect;
     public Agent disabled;
 
     public String level;
     public int appendingSize;
 
-    public Random rnd;
-
-    public RunGivenLevel(Random rnd) {
-       this.rnd = rnd;
+    public RunGivenLevel() {
     }
 //    public static void main(String[] args) {
 //
@@ -52,7 +47,7 @@ public class RunGivenLevel {
     }
     public AgentResultObject runLevel(CmdLineOptions options) {
 //        System.out.println(level);
-        Level lvl = Level.initializeLevel(rnd, level, appendingSize);
+        Level lvl = Level.initializeLevel(level, appendingSize, false);
 
 
         options = optionSetup(options);
@@ -102,7 +97,7 @@ public class RunGivenLevel {
             options = new CmdLineOptions(new String[0]);
             // basic options stuff
 //            options.setMaxFPS(false);
-            options.setVisualization(false);
+            options.setVisualization(GlobalOptions.VisualizationOn);
             options.setNumberOfTrials(1);
             options.setMaxFPS(true);
             ToolsConfigurator.CreateMarioComponentFrame(

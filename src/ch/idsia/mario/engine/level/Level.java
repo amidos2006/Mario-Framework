@@ -3,6 +3,9 @@ package ch.idsia.mario.engine.level;
 import java.io.*;
 import java.util.Random;
 
+import ch.idsia.mario.engine.LevelScene;
+import ch.idsia.mario.engine.sprites.Enemy;
+
 
 public class Level
 {
@@ -55,6 +58,17 @@ public class Level
         observation = new byte[width][height];
     }
     
+    private static boolean isSolid(char c) {
+	return  c == 'X' || c == '@' || c == '!' || c == 'B' || c == 'C' || 
+		c == 'Q' || c == '<' || c == '>' || c == '[' || c == ']';
+    }
+    
+    public static boolean isEmpty(char c) {
+	return !(c == 'X' || c == '@' || c == '!' || c == 'B' || c == 'C' ||  
+		 c == 'Q' || c == '<' || c == '>' || c == '[' || c == ']' ||
+		 c == 'o' || c == 'Y' || c == 'G' || c == 'K' || c == 'R'); 
+    }
+    
     private static int[] getCorrectIndex(String[] lines, int x, int y) {
 	int[][] table = new int[][] {
 	    new int[] {}, 
@@ -75,16 +89,16 @@ public class Level
 	    new int[] {1, 1}
 	    };
 	int index = 0;
-	if(x == 0 || lines[y].charAt(x - 1) == 'X') {
+	if(x == 0 || isSolid(lines[y].charAt(x - 1))) {
 	    index += 1;
 	}
-	if(x == lines[y].length() - 1 || lines[y].charAt(x + 1) == 'X') {
+	if(x == lines[y].length() - 1 || isSolid(lines[y].charAt(x + 1))) {
 	    index += 2;
 	}
-	if(y == lines.length - 1 || lines[y + 1].charAt(x) == 'X') {
+	if(y == lines.length - 1 || isSolid(lines[y + 1].charAt(x))) {
 	    index += 4;
 	}
-	if(y == 0 || lines[y - 1].charAt(x) == 'X') {
+	if(y == 0 || isSolid(lines[y - 1].charAt(x))) {
 	    index += 8;
 	}
 	
@@ -92,41 +106,41 @@ public class Level
     }
     
     private static boolean isGrounded(String[] lines, int x, int y) {
-	if(y == 0) {
-	    return true;
+	if(y >= lines.length) {
+	    return false;
 	}
-	Character c = lines[y-1].charAt(x);
-	return !(c == 'X' || c == 'S'|| c == '?' || c == 'Q' || c == '<' || c == '>' || c == '[' || c == ']');
+	return isSolid(lines[y+1].charAt(x));
     }
     
     private static int findFirstFloor(String[] lines, int x) {
-	boolean groundFound = false;
 	for(int i=lines.length - 1; i>= 0; i--) {
 	    Character c = lines[i].charAt(x);
-	    if(!groundFound) {
-		if(c == '-') {
-		    return i;
-		}
-	    }
-	    else {
-		if(c == 'X' || c == 'S'|| c == '?' || c == 'Q' || c == '<' || c == '>' || c == '[' || c == ']') {
-		    groundFound = true;
-		}
+	    if(isSolid(c)) {
+		return i;
 	    }
 	}
-	
 	return -1;
     }
     
-    public static Level initializeLevel(Random rnd, String level, int appendingSize) {
+    public static Level initializeLevel(String level, int appendingSize, boolean ignorePipes) {
+	int totalCoins = 0;
 	String[] lines = level.split("\n");
-	Level lvl = new Level(lines[0].length() + 6, lines.length);
+	Level lvl = new Level(lines[0].length(), lines.length);
 	for(int y=0; y<lines.length; y++) {
 	    for(int x=0; x<lines[y].length(); x++) {
 		Character c = lines[y].charAt(x);
 		switch(c) {
-		case 'E':
-		    lvl.setSpriteTemplate(x, y, new SpriteTemplate(rnd.nextInt(4), !isGrounded(lines, x, y)));
+		case 'Y':
+		    lvl.setSpriteTemplate(x, y, new SpriteTemplate(Enemy.ENEMY_SPIKY, !isGrounded(lines, x, y)));
+		    break;
+		case 'G':
+		    lvl.setSpriteTemplate(x, y, new SpriteTemplate(Enemy.ENEMY_GOOMBA, !isGrounded(lines, x, y)));
+		    break;
+		case 'K':
+		    lvl.setSpriteTemplate(x, y, new SpriteTemplate(Enemy.ENEMY_GREEN_KOOPA, !isGrounded(lines, x, y)));
+		    break;
+		case 'R':
+		    lvl.setSpriteTemplate(x, y, new SpriteTemplate(Enemy.ENEMY_RED_KOOPA, !isGrounded(lines, x, y)));
 		    break;
 		case 'X':
 		    int[] indeces = getCorrectIndex(lines, x, y);
@@ -137,39 +151,83 @@ public class Level
 			lvl.setBlock(x, y, (byte)(9));
 		    }
 		    break;
-		case '?':
-		    lvl.setBlock(x, y, (byte)(20 + rnd.nextInt(4)));
+		case '@':
+		    lvl.setBlock(x, y, (byte)(22));
+		    break;
+		case '!':
+		    lvl.setBlock(x, y, (byte)(20));
 		    break;
 		case 'Q':
-		    lvl.setBlock(x, y, (byte)(4 + rnd.nextInt(4)));
+		    lvl.setBlock(x, y, (byte)(4));
 		    break;
-		case 'S':
-		    lvl.setBlock(x, y, (byte)(16 + rnd.nextInt(4)));
+		case 'B':
+		    lvl.setBlock(x, y, (byte)(16));
+		    break;
+		case 'C':
+		    lvl.setBlock(x, y, (byte)(17));
 		    break;
 		case 'o':
+		    totalCoins += 1;
 		    lvl.setBlock(x, y, (byte)(32));
 		    break;
 		case '<':
 		    lvl.setBlock(x, y, (byte)(10));
+		    if(ignorePipes) {
+			indeces = getCorrectIndex(lines, x, y);
+			if(indeces.length == 2) {
+			    lvl.setBlock(x, y, (byte)(4 + indeces[0] + (8 + indeces[1]) * 16));
+			}
+			else {
+			    lvl.setBlock(x, y, (byte)(9));
+			}
+		    }
 		    break;
 		case '>':
 		    lvl.setBlock(x, y, (byte)(11));
+		    if(ignorePipes) {
+			indeces = getCorrectIndex(lines, x, y);
+			if(indeces.length == 2) {
+			    lvl.setBlock(x, y, (byte)(4 + indeces[0] + (8 + indeces[1]) * 16));
+			}
+			else {
+			    lvl.setBlock(x, y, (byte)(9));
+			}
+		    }
 		    break;
 		case '[':
 		    lvl.setBlock(x, y, (byte)(10 + 16));
+		    if(ignorePipes) {
+			indeces = getCorrectIndex(lines, x, y);
+			if(indeces.length == 2) {
+			    lvl.setBlock(x, y, (byte)(4 + indeces[0] + (8 + indeces[1]) * 16));
+			}
+			else {
+			    lvl.setBlock(x, y, (byte)(9));
+			}
+		    }
 		    break;
 		case ']':
 		    lvl.setBlock(x, y, (byte)(11 + 16));
+		    if(ignorePipes) {
+			indeces = getCorrectIndex(lines, x, y);
+			if(indeces.length == 2) {
+			    lvl.setBlock(x, y, (byte)(4 + indeces[0] + (8 + indeces[1]) * 16));
+			}
+			else {
+			    lvl.setBlock(x, y, (byte)(9));
+			}
+		    }
 		    break;
 		}
 	    }
 	}
-	appendingSize = Math.max(1, appendingSize);
-	lvl.xExit = lines[0].length() - appendingSize;
+	appendingSize = Math.max(3, appendingSize);
+	lvl.xExit = lines[0].length() - appendingSize + 1;
 	lvl.yExit = findFirstFloor(lines, lvl.xExit);
 	if(lvl.yExit == -1){
-	    lvl.yExit = rnd.nextInt(lines.length);
-    }
+	    lvl.yExit = lines.length - 2;
+	}
+	LevelScene.totalNumberOfCoins = totalCoins;
 	return lvl;
     }
 

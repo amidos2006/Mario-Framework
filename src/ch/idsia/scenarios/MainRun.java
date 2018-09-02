@@ -1,6 +1,7 @@
 package ch.idsia.scenarios;
 
 import ch.idsia.ai.agents.ai.*;
+import ch.idsia.mario.engine.GlobalOptions;
 import ch.idsia.ai.agents.Agent;
 import ch.idsia.ai.agents.AgentsPool;
 //import ch.idsia.ai.agents.icegic.robin.AStarAgent;
@@ -33,6 +34,9 @@ public class MainRun
     private static int marioModeSum = 0;
 
     public static void main(String[] args) {
+	GlobalOptions.VisualizationOn = true;
+	GlobalOptions.MarioCeiling = true;
+	
         CmdLineOptions cmdLineOptions = new CmdLineOptions(args);
         EvaluationOptions evaluationOptions = cmdLineOptions;  // if none options mentioned, all defalults are used.
         createAgentsPool();

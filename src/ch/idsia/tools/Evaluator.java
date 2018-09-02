@@ -1,6 +1,7 @@
 package ch.idsia.tools;
 
 import ch.idsia.mario.engine.GlobalOptions;
+import ch.idsia.mario.engine.level.Level;
 import ch.idsia.mario.engine.sprites.Mario;
 import ch.idsia.mario.environments.Environment;
 import ch.idsia.mario.simulation.BasicSimulator;
@@ -95,7 +96,11 @@ public class Evaluator implements Runnable
         }
     }
 
-    public List<EvaluationInfo> evaluate()
+    public List<EvaluationInfo> evaluate(){
+	return this.evaluate(null);
+    }
+    
+    public List<EvaluationInfo> evaluate(Level lvl)
     {
         if (this.evaluationOptions.isServerMode() )
         {
@@ -118,7 +123,13 @@ public class Evaluator implements Runnable
 //        do
 //        {
 //            LOGGER.println("Attempts left: " + (evaluationOptions.getNumberOfTrials() - ++i ), LOGGER.VERBOSE_MODE.ALL);
+        if(lvl == null) {
             evaluationInfo = simulator.simulateOneLevel();
+        }
+        else {
+            evaluationInfo = ((BasicSimulator)simulator).simulateOneLevel(lvl);
+        }
+            
                                                         
             evaluationInfo.levelType = evaluationOptions.getLevelType();
             evaluationInfo.levelDifficulty = evaluationOptions.getLevelDifficulty();

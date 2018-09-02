@@ -13,7 +13,7 @@ import java.text.DecimalFormat;
  */
 public class EvaluationInfo
 {
-    private static final int MagicNumberUndef = -42;
+    public static final int MagicNumberUndef = -42;
     public int levelType = MagicNumberUndef;
     public int marioStatus = MagicNumberUndef;
     public int livesLeft = MagicNumberUndef;
@@ -24,9 +24,16 @@ public class EvaluationInfo
     public int timeSpentOnLevel = MagicNumberUndef;
     public int totalTimeGiven = MagicNumberUndef;
     public int numberOfGainedCoins = MagicNumberUndef;
-//    public int totalNumberOfCoins = MagicNumberUndef;
+    public int totalNumberOfCoins = MagicNumberUndef;
     public int totalActionsPerfomed = MagicNumberUndef;
     public int totalFramesPerfomed = MagicNumberUndef;
+    public int stompKills = MagicNumberUndef;
+    public int shellKills = MagicNumberUndef;
+    public int fireKills = MagicNumberUndef;
+    public int totalKills = MagicNumberUndef;
+    public int numOfJumps = MagicNumberUndef;
+    public float airTime = MagicNumberUndef;
+    public float jumpDistance = MagicNumberUndef;
     // Number Of collisions with creatures
     // if large
     // if fire
@@ -37,14 +44,13 @@ public class EvaluationInfo
     public int levelDifficulty = MagicNumberUndef;
     public int levelRandSeed = MagicNumberUndef;
     public int marioMode = MagicNumberUndef;
-    public int killsTotal = MagicNumberUndef;
 
     public double computeBasicFitness()
     {
         // neglect totalActionsPerfomed;
         // neglect totalLengthOfLevelCells;
         // neglect totalNumberOfCoins;
-        return lengthOfLevelPassedPhys - timeSpentOnLevel + numberOfGainedCoins + marioStatus*5000;
+        return lengthOfLevelPassedPhys - timeSpentOnLevel + numberOfGainedCoins + marioStatus * 5000;
     }
 
     public double computeDistancePassed()
@@ -54,7 +60,7 @@ public class EvaluationInfo
 
     public int computeKillsTotal()
     {
-        return this.killsTotal;
+        return this.totalKills;
     }
 
     //TODO: possible fitnesses adjustments: penalize for collisions with creatures and especially for  suicide. It's a sin.
@@ -69,7 +75,7 @@ public class EvaluationInfo
                         totalLengthOfLevelCells,
                         timeSpentOnLevel,
                         numberOfGainedCoins,
-//                        totalNumberOfCoins,
+                        totalNumberOfCoins,
                         totalActionsPerfomed,
                         totalFramesPerfomed,
                         computeBasicFitness()

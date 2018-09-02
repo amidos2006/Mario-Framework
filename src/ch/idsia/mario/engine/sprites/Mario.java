@@ -98,6 +98,8 @@ public class Mario extends Sprite
     public int deathTime = 0;
     public int winTime = 0;
     private int invulnerableTime = 0;
+    private float airTime;
+    private float startX;
 
     public Sprite carried = null;
     private static Mario instance;
@@ -109,8 +111,11 @@ public class Mario extends Sprite
         this.world = world;
         keys = Scene.keys;      // SK: in fact, this is already redundant due to using Agent
         cheatKeys = Scene.keys; // SK: in fact, this is already redundant due to using Agent
-        x = 32;
-        y = 0;
+        x = 8;
+        y = (world.level.height - 1) * 16 - 1;
+        if(GlobalOptions.MarioCeiling) {
+            y = 8;
+        }
 
         facing = 1;
         setLarge(Mario.large, Mario.fire);
@@ -243,7 +248,7 @@ public class Mario extends Sprite
         {
             facing = -1;
         }
-
+        
         if (keys[KEY_JUMP] || (jumpTime < 0 && !onGround && !sliding))
         {
             if (jumpTime < 0)
@@ -254,6 +259,9 @@ public class Mario extends Sprite
             }
             else if (onGround && mayJump)
             {
+        	if(startX == -1) {
+            		startX = x;
+                }
                 xJumpSpeed = 0;
                 yJumpSpeed = -1.9f;
                 jumpTime = 7;
@@ -282,6 +290,21 @@ public class Mario extends Sprite
         else
         {
             jumpTime = 0;
+        }
+        
+        //Statistics
+        if(!onGround) {
+            airTime += 1;
+        }
+        else {
+            if(airTime > 0) {
+        	LevelScene.airTime.add(airTime);
+            }
+            if(startX > 0 && Math.floor(Math.abs(x - startX)) > 0) {
+        	LevelScene.longJump.add((float)Math.floor(Math.abs(x - startX)));
+            }
+            startX = -1;
+            airTime = 0;
         }
 
         if (keys[KEY_LEFT] && !ducking)
