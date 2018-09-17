@@ -145,7 +145,7 @@ public class Level
 		case 'X':
 		    int[] indeces = getCorrectIndex(lines, x, y);
 		    if(indeces.length == 2) {
-			lvl.setBlock(x, y, (byte)(4 + indeces[0] + (8 + indeces[1]) * 16));
+			lvl.setBlock(x, y, (byte)(indeces[0] + (8 + indeces[1]) * 16));
 		    }
 		    else {
 			lvl.setBlock(x, y, (byte)(9));
@@ -175,7 +175,7 @@ public class Level
 		    if(ignorePipes) {
 			indeces = getCorrectIndex(lines, x, y);
 			if(indeces.length == 2) {
-			    lvl.setBlock(x, y, (byte)(4 + indeces[0] + (8 + indeces[1]) * 16));
+			    lvl.setBlock(x, y, (byte)(indeces[0] + (8 + indeces[1]) * 16));
 			}
 			else {
 			    lvl.setBlock(x, y, (byte)(9));
@@ -187,7 +187,7 @@ public class Level
 		    if(ignorePipes) {
 			indeces = getCorrectIndex(lines, x, y);
 			if(indeces.length == 2) {
-			    lvl.setBlock(x, y, (byte)(4 + indeces[0] + (8 + indeces[1]) * 16));
+			    lvl.setBlock(x, y, (byte)(indeces[0] + (8 + indeces[1]) * 16));
 			}
 			else {
 			    lvl.setBlock(x, y, (byte)(9));
@@ -199,7 +199,7 @@ public class Level
 		    if(ignorePipes) {
 			indeces = getCorrectIndex(lines, x, y);
 			if(indeces.length == 2) {
-			    lvl.setBlock(x, y, (byte)(4 + indeces[0] + (8 + indeces[1]) * 16));
+			    lvl.setBlock(x, y, (byte)(indeces[0] + (8 + indeces[1]) * 16));
 			}
 			else {
 			    lvl.setBlock(x, y, (byte)(9));
@@ -211,7 +211,7 @@ public class Level
 		    if(ignorePipes) {
 			indeces = getCorrectIndex(lines, x, y);
 			if(indeces.length == 2) {
-			    lvl.setBlock(x, y, (byte)(4 + indeces[0] + (8 + indeces[1]) * 16));
+			    lvl.setBlock(x, y, (byte)(indeces[0] + (8 + indeces[1]) * 16));
 			}
 			else {
 			    lvl.setBlock(x, y, (byte)(9));

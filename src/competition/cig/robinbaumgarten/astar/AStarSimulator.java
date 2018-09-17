@@ -261,6 +261,9 @@ public class AStarSimulator
     	{
     		ticks++;
     		current = pickBestPos(posPool);
+    		if(current == null) {
+    		    return;
+    		}
     		currentGood = false;
     		float realRemainingTime = current.simulatePos();
     		
