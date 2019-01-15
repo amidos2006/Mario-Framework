@@ -92,8 +92,10 @@ public class Mario extends Sprite {
     public int deathTime = 0;
     public int winTime = 0;
     private int invulnerableTime = 0;
-    private float airTime;
-    private float startX;
+    public float airTime;
+    public float startX = -1;
+    public float startY = -1;
+    public float minY = -1;
 
     public Sprite carried = null;
     private static Mario instance;
@@ -231,7 +233,10 @@ public class Mario extends Sprite {
 		if (startX == -1) {
 		    startX = x;
 		}
-		System.out.println(startX);
+		if(startY == -1) {
+		    startY = y;
+		    minY = y;
+		}
 		xJumpSpeed = 0;
 		yJumpSpeed = -1.9f;
 		jumpTime = 7;
@@ -259,6 +264,9 @@ public class Mario extends Sprite {
 	// Statistics
 	if (!onGround) {
 	    airTime += 1;
+	    if(y < minY) {
+		minY = y;
+	    }
 	} else {
 	    if (airTime > 0) {
 		LevelScene.airTime.add(airTime);
@@ -266,7 +274,11 @@ public class Mario extends Sprite {
 	    if (startX > 0 && Math.floor(Math.abs(x - startX)) > 0) {
 		LevelScene.longJump.add((float) Math.floor(Math.abs(x - startX)));
 	    }
+	    if(startY > 0 && Math.floor(Math.abs(minY - startY)) > 0) {
+		LevelScene.highJump.add((float) Math.floor(Math.abs(minY - startY)));
+	    }
 	    startX = -1;
+	    startY = -1;
 	    airTime = 0;
 	}
 
@@ -625,7 +637,11 @@ public class Mario extends Sprite {
 	if (startX > 0 && Math.floor(Math.abs(x - startX)) > 0) {
 	    LevelScene.longJump.add((float) Math.floor(Math.abs(x - startX)));
 	}
+	if(startY > 0 && Math.floor(Math.abs(minY - startY)) > 0) {
+	    LevelScene.highJump.add((float) Math.floor(Math.abs(minY - startY)));
+	}
 	startX = -1;
+	startY = -1;
 	airTime = 0;
 
 	xDeathPos = (int) x;
@@ -642,7 +658,11 @@ public class Mario extends Sprite {
 	if (startX > 0 && Math.floor(Math.abs(x - startX)) > 0) {
 	    LevelScene.longJump.add((float) Math.floor(Math.abs(x - startX)));
 	}
+	if(startY > 0 && Math.floor(Math.abs(minY - startY)) > 0) {
+	    LevelScene.highJump.add((float) Math.floor(Math.abs(minY - startY)));
+	}
 	startX = -1;
+	startY = -1;
 	airTime = 0;
 	xDeathPos = (int) x;
 	yDeathPos = (int) y;

@@ -58,7 +58,7 @@ public class Level
         observation = new byte[width][height];
     }
     
-    private static boolean isSolid(char c) {
+    public static boolean isSolid(char c) {
 	return  c == 'X' || c == '@' || c == '!' || c == 'B' || c == 'C' || 
 		c == 'Q' || c == '<' || c == '>' || c == '[' || c == ']';
     }

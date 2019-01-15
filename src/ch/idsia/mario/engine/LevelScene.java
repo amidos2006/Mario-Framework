@@ -60,6 +60,7 @@ public class LevelScene extends Scene implements SpriteContext
     public static int totalNumberOfCoins;
     public static ArrayList<Float> airTime;
     public static ArrayList<Float> longJump;
+    public static ArrayList<Float> highJump;
 
     private static String[] LEVEL_TYPES = {"Overground(0)",
                                            "Underground(1)",
@@ -89,6 +90,12 @@ public class LevelScene extends Scene implements SpriteContext
         }
         else {
             longJump.clear();
+        }
+        if(highJump == null) {
+            highJump = new ArrayList<Float>();
+        }
+        else {
+            highJump.clear();
         }
     }
 

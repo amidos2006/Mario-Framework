@@ -36,6 +36,7 @@ public class MarioComponent extends JComponent implements Runnable, /*KeyListene
 
     private int ZLevelEnemies = 1;
     private int ZLevelScene = 1;
+    private boolean pauseGame = false;
 
     public void setGameViewer(GameViewer gameViewer) {
         this.gameViewer = gameViewer;
@@ -143,6 +144,9 @@ public class MarioComponent extends JComponent implements Runnable, /*KeyListene
         while (/*Thread.currentThread() == animator*/ running) {
             // Display the next frame of animation.
 //                repaint();
+            if(this.pauseGame && frame > 2) {
+        	continue;
+            }
             scene.tick();
             if (gameViewer != null && gameViewer.getContinuousUpdatesState())
                 gameViewer.tick();
@@ -240,6 +244,19 @@ public class MarioComponent extends JComponent implements Runnable, /*KeyListene
             // Advance the frame
             frame++;
         }
+        //Making sure everything is recorded and nothing is missing
+        if (mario.airTime > 0) {
+	    LevelScene.airTime.add(mario.airTime);
+	}
+	if (mario.startX > 0 && Math.floor(Math.abs(mario.x - mario.startX)) > 0) {
+	    LevelScene.longJump.add((float) Math.floor(Math.abs(mario.x - mario.startX)));
+	}
+	if(mario.startY > 0 && Math.floor(Math.abs(mario.minY - mario.startY)) > 0) {
+		LevelScene.highJump.add((float) Math.floor(Math.abs(mario.minY - mario.startY)));
+	}
+	mario.startX = -1;
+	mario.startY = -1;
+	mario.airTime = 0;
 //=========
         evaluationInfo.agentType = agent.getClass().getSimpleName();
         evaluationInfo.agentName = agent.getName();
@@ -272,6 +289,11 @@ public class MarioComponent extends JComponent implements Runnable, /*KeyListene
         Arrays.sort(jumpDistance);
         if(jumpDistance.length > 0) {
             evaluationInfo.jumpDistance = jumpDistance[jumpDistance.length - 1];
+        }
+        Float[] jumpHeight = LevelScene.highJump.toArray(new Float[0]);
+        Arrays.sort(jumpHeight);
+        if(jumpHeight.length > 0) {
+            evaluationInfo.jumpHeight = jumpHeight[jumpHeight.length - 1];
         }
 //        System.out.println("Kills by Falling: " + (LevelScene.killedCreaturesTotal - LevelScene.killedCreaturesByStomp - 
 //        	LevelScene.killedCreaturesByShell - LevelScene.killedCreaturesByFireBall));
@@ -439,7 +461,7 @@ public class MarioComponent extends JComponent implements Runnable, /*KeyListene
     }
 
     public void setPaused(boolean paused) {
-        levelScene.paused = paused;
+        this.pauseGame = paused;
     }
 
     public void setZLevelEnemies(int ZLevelEnemies) {

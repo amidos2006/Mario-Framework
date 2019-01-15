@@ -34,6 +34,7 @@ public class EvaluationInfo
     public int numOfJumps = MagicNumberUndef;
     public float airTime = MagicNumberUndef;
     public float jumpDistance = MagicNumberUndef;
+    public float jumpHeight = MagicNumberUndef;
     // Number Of collisions with creatures
     // if large
     // if fire

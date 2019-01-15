@@ -1,4 +1,4 @@
-package ch.idsia.tools;
+package ch.idsia.tools.runners;
 
 import ch.idsia.ai.agents.Agent;
 import ch.idsia.ai.agents.human.HumanKeyboardAgent;
