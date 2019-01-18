@@ -1,5 +1,6 @@
 package competition.cig.robinbaumgarten.astar.sprites;
 
+import ch.idsia.mario.engine.GlobalOptions;
 import competition.cig.robinbaumgarten.astar.LevelScene;
 import competition.cig.robinbaumgarten.astar.level.SpriteTemplate;
 
@@ -82,8 +83,11 @@ public class Sprite implements Cloneable
     {
     }
 
-    public boolean shellCollideCheck(Shell shell)
+    public boolean shellCollideCheck(Shell shell, Mario mario)
     {
+	if(GlobalOptions.limitedForwardModel_killShell) {
+	    mario.die();
+	}
         return false;
     }
 

@@ -12,8 +12,8 @@ public class LimitedJumpAgent implements Agent
     protected String name = "LimitedJump_Agent";
     private LimitedJumpMario sim;
     private int tickCounter = 0;
-    private float lastX = 0;
-    private float lastY = 0;
+    private float lastX = 8;
+    private float lastY = 207;
 	int errCount = 0;
 	LimitedJumpAgent errAgent;
     public void reset()

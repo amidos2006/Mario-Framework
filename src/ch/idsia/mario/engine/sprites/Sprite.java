@@ -104,8 +104,11 @@ public class Sprite
     {
     }
 
-    public boolean shellCollideCheck(Shell shell)
+    public boolean shellCollideCheck(Shell shell, Mario mario)
     {
+	if(GlobalOptions.limitedForwardModel_killShell) {
+	    mario.die();
+	}
         return false;
     }
 

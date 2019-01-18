@@ -333,7 +333,7 @@ public class LevelScene implements SpriteContext, Cloneable
                 {
                     if (sprite != shell && !shell.dead)
                     {
-                        if (sprite.shellCollideCheck(shell))
+                        if (sprite.shellCollideCheck(shell, mario))
                         {
                             if (mario.carried == shell && !shell.dead)
                             {

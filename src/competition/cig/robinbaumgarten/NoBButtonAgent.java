@@ -16,8 +16,8 @@ public class NoBButtonAgent implements Agent
 	//private ShortSightedMario sim;
 	private NoBButtonMario sim;
 	private int tickCounter = 0;
-	private float lastX = 0;
-	private float lastY = 0;
+	private float lastX = 8;
+	    private float lastY = 207;
 	int errCount = 0;
 	NoBButtonAgent errAgent;
 	public void reset()

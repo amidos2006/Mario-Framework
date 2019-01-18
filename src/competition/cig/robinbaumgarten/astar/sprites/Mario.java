@@ -4,7 +4,6 @@ import competition.cig.robinbaumgarten.astar.LevelScene;
 import competition.cig.robinbaumgarten.astar.level.Level;
 
 import ch.idsia.mario.engine.GlobalOptions;
-import ch.idsia.mario.engine.Scene;
 
 
 public class Mario extends Sprite implements Cloneable
@@ -80,11 +79,12 @@ public class Mario extends Sprite implements Cloneable
     //public boolean[] cheatKeys;
     private float runTime;
     boolean wasOnGround = false;
-    public boolean onGround = false;
-    private boolean mayJump = false;
+    public boolean onGround = true;
+    private boolean mayJump = true;
     private boolean ducking = false;
     public boolean sliding = false;
     public int jumpTime = 0;
+    public int prevJumpTime = 0;
     private float xJumpSpeed;
     private float yJumpSpeed;
     private boolean canShoot = false;
@@ -111,11 +111,13 @@ public class Mario extends Sprite implements Cloneable
         this.world = world;
         //keys = Scene.keys;      // SK: in fact, this is already redundant due to using Agent
         //cheatKeys = Scene.keys; // SK: in fact, this is already redundant due to using Agent
-        x = 32;
-        y = 0;
+        x = 8;
+        y = 207;
+        xa = 0;
+        ya = 3;
 
         facing = 1;
-        setLarge(true, true);
+        setLarge(false, false);
     }
      
 
@@ -296,8 +298,17 @@ public class Mario extends Sprite implements Cloneable
         }
 
         onGround = false;
+        if(GlobalOptions.limitedForwardModel_killRun && Math.abs(xa) > 6) {
+	    this.die();
+	    return;
+	}
+	if(GlobalOptions.limitedForwardModel_killHighJump && prevJumpTime < 3 && prevJumpTime > 0 && jumpTime == 0) {
+	    this.die();
+	    return;
+	}
         move(xa, 0);
         move(0, ya);
+        prevJumpTime = jumpTime;
 
         //System.out.println("Mario Sim Speed: "+xa);
         if (y > world.level.height * 16 + 16)
@@ -471,6 +482,10 @@ public class Mario extends Sprite implements Cloneable
 
     public void stomp(Enemy enemy)
     {
+	if(GlobalOptions.limitedForwardModel_killStomp) {
+	    die();
+	    return;
+	}
     	if (world.verbose > 0) System.out.println("Prestomp!");
         if (deathTime > 0 || world.paused) return;
 
@@ -491,6 +506,10 @@ public class Mario extends Sprite implements Cloneable
 
     public void stomp(Shell shell)
     {
+	if(GlobalOptions.limitedForwardModel_killStomp) {
+	    die();
+	    return;
+	}
         if (deathTime > 0 || world.paused) return;
 
         if (keys[KEY_SPEED] && shell.facing == 0)
@@ -565,6 +584,10 @@ public class Mario extends Sprite implements Cloneable
 
     public void getFlower()
     {
+	if(GlobalOptions.limitedForwardModel_killMushroom) {
+	    die();
+	    return;
+	}
         if (deathTime > 0 || world.paused) return;
 
         if (!fire)
@@ -582,6 +605,10 @@ public class Mario extends Sprite implements Cloneable
 
     public void getMushroom()
     {
+	if(GlobalOptions.limitedForwardModel_killMushroom) {
+	    die();
+	    return;
+	}
         if (deathTime > 0 || world.paused) return;
 
         if (!large)
@@ -614,7 +641,10 @@ public class Mario extends Sprite implements Cloneable
 
     public void stomp(BulletBill bill)
     {
-
+	if(GlobalOptions.limitedForwardModel_killStomp) {
+	    die();
+	    return;
+	}
     	if (world.verbose > 5) System.out.println("Simstomping Bullet Bill!");
         if (deathTime > 0 || world.paused) return;
         float targetY = bill.y - bill.height / 2;
@@ -656,6 +686,10 @@ public class Mario extends Sprite implements Cloneable
     
     public void getCoin()
     {
+	if(GlobalOptions.limitedForwardModel_killCoin) {
+	    this.die();
+	    return;
+	}
         coins++;
         world.coinsCollected++;
         if (coins % 100 == 0)

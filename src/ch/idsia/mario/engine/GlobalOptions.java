@@ -9,6 +9,13 @@ import java.util.Date;
 import java.util.TimeZone;
 
 public class GlobalOptions {
+    public static boolean limitedForwardModel_killStomp = false;
+    public static boolean limitedForwardModel_killHighJump = false;
+    public static boolean limitedForwardModel_killRun = false;
+    public static boolean limitedForwardModel_killCoin = false;
+    public static boolean limitedForwardModel_killShell = false;
+    public static boolean limitedForwardModel_killMushroom = false;
+    
     public static boolean Labels = false;
     public static boolean MarioAlwaysInCenter = false;
     public static Integer FPS = 24;
@@ -39,7 +46,6 @@ public class GlobalOptions {
     public static MarioComponent getMarioComponent() {
         return marioComponent;
     }
-    
 
     public static void registerGameViewer(GameViewer gv)
     {

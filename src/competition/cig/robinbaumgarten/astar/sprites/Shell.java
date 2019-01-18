@@ -1,5 +1,6 @@
 package competition.cig.robinbaumgarten.astar.sprites;
 
+import ch.idsia.mario.engine.GlobalOptions;
 import competition.cig.robinbaumgarten.astar.LevelScene;
 
 public class Shell extends Sprite
@@ -301,7 +302,7 @@ public class Shell extends Sprite
         deadTime = 100;
     }
 
-    public boolean shellCollideCheck(Shell shell)
+    public boolean shellCollideCheck(Shell shell, Mario mario)
     {
         if (deadTime != 0) return false;
 
@@ -319,6 +320,9 @@ public class Shell extends Sprite
 
                 die();
                 shell.die();
+                if(GlobalOptions.limitedForwardModel_killShell) {
+        	    mario.die();
+        	}
                 return true;
             }
         }

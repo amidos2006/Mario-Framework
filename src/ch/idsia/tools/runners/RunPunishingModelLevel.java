@@ -6,10 +6,6 @@ import ch.idsia.mario.simulation.Simulation;
 import ch.idsia.tools.EvaluationInfo;
 import ch.idsia.tools.ToolsConfigurator;
 import competition.cig.robinbaumgarten.AStarAgent;
-import competition.cig.robinbaumgarten.DoNothingAgent;
-import competition.cig.robinbaumgarten.LimitedJumpAgent;
-import competition.cig.robinbaumgarten.EnemyBlindAgent;
-import competition.cig.robinbaumgarten.NoBButtonAgent;
 import ch.idsia.tools.AgentResultObject;
 import ch.idsia.tools.CmdLineOptions;
 import ch.idsia.mario.engine.GlobalOptions;
@@ -19,13 +15,13 @@ import java.util.HashMap;
 import java.util.Random;
 
 
-public class RunLimitedAgentsLevel {
+public class RunPunishingModelLevel {
     private String _level;
     private int _appendingSize;
     private Random _rnd;
     private HashMap<String, String> _parameters;
 
-    public RunLimitedAgentsLevel(Random rnd, HashMap<String, String> parameters) {
+    public RunPunishingModelLevel(Random rnd, HashMap<String, String> parameters) {
     	this._rnd = rnd;
 	this._parameters = parameters;
     }
@@ -36,30 +32,48 @@ public class RunLimitedAgentsLevel {
     }
     public AgentResultObject runLevel(boolean ignorePipes) {
 	Agent perfectAgent = new AStarAgent();
-        Agent limitedAgent = new DoNothingAgent();
-        if(this._parameters != null) {
-            if(this._parameters.get("agentType") == "LimitedJump") {
-        	limitedAgent = new LimitedJumpAgent();
-            }
-            if(this._parameters.get("agentType") == "EnemyBlind") {
-        	limitedAgent = new EnemyBlindAgent();
-            }
-            if(this._parameters.get("agentType") == "NoRun") {
-        	limitedAgent = new NoBButtonAgent();
-            }
-        }
-        
         Level lvl = Level.initializeLevel(_level, _appendingSize, ignorePipes);
         CmdLineOptions options = optionSetup(false);
         options.setAgent(perfectAgent);
         Simulation simulator = new BasicSimulator(options.getSimulationOptionsCopy());
         EvaluationInfo perfectEvalInfo = ((BasicSimulator)simulator).simulateOneLevel(lvl);
         
+        if(this._parameters != null) {
+            switch(this._parameters.get("agentType").trim().toLowerCase()) {
+            case "highjump":
+        	GlobalOptions.limitedForwardModel_killHighJump = true;
+        	break;
+            case "coin":
+        	GlobalOptions.limitedForwardModel_killCoin = true;
+        	break;
+            case "mushroom":
+        	GlobalOptions.limitedForwardModel_killMushroom = true;
+        	break;
+            case "run":
+                GlobalOptions.limitedForwardModel_killRun = true;
+                break;
+            case "shell":
+        	GlobalOptions.limitedForwardModel_killShell = true;
+        	break;
+            case "stomp":
+        	GlobalOptions.limitedForwardModel_killStomp = true;
+        	break;
+            }
+        }
+        
+        perfectAgent = new AStarAgent();
         lvl = Level.initializeLevel(_level, _appendingSize, ignorePipes);
         options = optionSetup(false);
-        options.setAgent(limitedAgent);
+        options.setAgent(perfectAgent);
         simulator = new BasicSimulator(options.getSimulationOptionsCopy());
         EvaluationInfo limitedEvalInfo = ((BasicSimulator)simulator).simulateOneLevel(lvl);
+        
+        GlobalOptions.limitedForwardModel_killCoin = false;
+        GlobalOptions.limitedForwardModel_killHighJump = false;
+        GlobalOptions.limitedForwardModel_killMushroom = false;
+        GlobalOptions.limitedForwardModel_killRun = false;
+        GlobalOptions.limitedForwardModel_killShell = false;
+        GlobalOptions.limitedForwardModel_killStomp = false;
         
        return new AgentResultObject(perfectEvalInfo.marioStatus, limitedEvalInfo.marioStatus, 
 	       perfectEvalInfo.lengthOfLevelPassedCells, limitedEvalInfo.lengthOfLevelPassedCells, 

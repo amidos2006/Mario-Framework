@@ -1,6 +1,7 @@
 package ch.idsia.mario.engine.sprites;
 
 import ch.idsia.mario.engine.Art;
+import ch.idsia.mario.engine.GlobalOptions;
 import ch.idsia.mario.engine.LevelScene;
 
 
@@ -122,7 +123,7 @@ public class BulletBill extends Sprite
         return false;
     }      
 
-    public boolean shellCollideCheck(Shell shell)
+    public boolean shellCollideCheck(Shell shell, Mario mario)
     {
         if (deadTime != 0) return false;
 
@@ -138,7 +139,9 @@ public class BulletBill extends Sprite
                 xa = 0;
                 ya = 1;
                 deadTime = 100;
-
+                if(GlobalOptions.limitedForwardModel_killShell) {
+        	    mario.die();
+        	}
                 return true;
             }
         }

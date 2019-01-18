@@ -871,7 +871,7 @@ public class LevelScene extends Scene implements SpriteContext
                 {
                     if (sprite != shell && !shell.dead)
                     {
-                        if (sprite.shellCollideCheck(shell))
+                        if (sprite.shellCollideCheck(shell, mario))
                         {
                             if (mario.carried == shell && !shell.dead)
                             {
@@ -1156,7 +1156,7 @@ public class LevelScene extends Scene implements SpriteContext
             }
             else
             {
-                Mario.getCoin();
+                Mario.getCoin(mario);
                 addSprite(new CoinAnim(x, y));
             }
         }
@@ -1183,7 +1183,7 @@ public class LevelScene extends Scene implements SpriteContext
         byte block = level.getBlock(x, y);
         if (((Level.TILE_BEHAVIORS[block & 0xff]) & Level.BIT_PICKUPABLE) > 0)
         {
-            Mario.getCoin();
+            Mario.getCoin(mario);
             level.setBlock(x, y, (byte) 0);
             addSprite(new CoinAnim(x, y + 1));
         }

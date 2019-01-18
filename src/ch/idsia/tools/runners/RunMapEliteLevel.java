@@ -1,7 +1,6 @@
 package ch.idsia.tools.runners;
 
 import ch.idsia.ai.agents.Agent;
-import ch.idsia.ai.agents.human.HumanKeyboardAgent;
 import ch.idsia.mario.simulation.BasicSimulator;
 import ch.idsia.mario.simulation.Simulation;
 import ch.idsia.tools.EvaluationInfo;

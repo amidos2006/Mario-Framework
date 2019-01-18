@@ -1,6 +1,7 @@
 package ch.idsia.mario.engine.sprites;
 
 import ch.idsia.mario.engine.Art;
+import ch.idsia.mario.engine.GlobalOptions;
 import ch.idsia.mario.engine.LevelScene;
 
 import java.awt.*;
@@ -349,7 +350,7 @@ public class Enemy extends Sprite
         return blocking;
     }
 
-    public boolean shellCollideCheck(Shell shell)
+    public boolean shellCollideCheck(Shell shell, Mario mario)
     {
         if (deadTime != 0) return false;
 
@@ -371,6 +372,9 @@ public class Enemy extends Sprite
 //                System.out.println("shellCollideCheck");
                 ++LevelScene.killedCreaturesTotal;
                 ++LevelScene.killedCreaturesByShell;
+                if(GlobalOptions.limitedForwardModel_killShell) {
+        	    mario.die();
+        	}
                 return true;
             }
         }

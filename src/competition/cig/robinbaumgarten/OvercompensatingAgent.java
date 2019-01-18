@@ -23,7 +23,7 @@ public class OvercompensatingAgent implements Agent
     public void reset()
     {
         action = new boolean[Environment.numberOfButtons];
-        sim = new AStarSimulator();
+        sim = new AStarSimulator(1500, 15);
     }
     
     public void printLevel(byte[][] levelScene)

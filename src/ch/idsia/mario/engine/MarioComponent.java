@@ -279,7 +279,9 @@ public class MarioComponent extends JComponent implements Runnable, /*KeyListene
         evaluationInfo.fireKills = LevelScene.killedCreaturesByFireBall;
         evaluationInfo.totalKills = LevelScene.killedCreaturesTotal;
         evaluationInfo.numOfJumps = LevelScene.longJump.size();
-        LevelScene.airTime.remove(0);
+        if(LevelScene.airTime.size() > 0) {
+            LevelScene.airTime.remove(0);
+        }
         Float[] airTime = LevelScene.airTime.toArray(new Float[0]);
         Arrays.sort(airTime);
         if(airTime.length > 0) {

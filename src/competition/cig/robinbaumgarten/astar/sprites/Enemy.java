@@ -1,5 +1,6 @@
 package competition.cig.robinbaumgarten.astar.sprites;
 
+import ch.idsia.mario.engine.GlobalOptions;
 import competition.cig.robinbaumgarten.astar.LevelScene;
 
 public class Enemy extends Sprite implements Cloneable
@@ -306,7 +307,7 @@ public class Enemy extends Sprite implements Cloneable
         return blocking;
     }
 
-    public boolean shellCollideCheck(Shell shell)
+    public boolean shellCollideCheck(Shell shell, Mario mario)
     {
         if (deadTime != 0) return false;
 
@@ -323,6 +324,9 @@ public class Enemy extends Sprite implements Cloneable
                 if (spriteTemplate != null) spriteTemplate.isDead = true;
                 deadTime = 100;
                 winged = false;
+                if(GlobalOptions.limitedForwardModel_killShell) {
+        	    mario.die();
+        	}
                 return true;
             }
         }

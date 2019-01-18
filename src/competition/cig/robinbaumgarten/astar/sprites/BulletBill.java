@@ -1,5 +1,6 @@
 package competition.cig.robinbaumgarten.astar.sprites;
 
+import ch.idsia.mario.engine.GlobalOptions;
 import competition.cig.robinbaumgarten.astar.LevelScene;
 
 
@@ -107,7 +108,7 @@ public class BulletBill extends Sprite
         return false;
     }      
 
-    public boolean shellCollideCheck(Shell shell)
+    public boolean shellCollideCheck(Shell shell, Mario mario)
     {
         if (deadTime != 0) return false;
 
@@ -123,7 +124,9 @@ public class BulletBill extends Sprite
                 xa = 0;
                 ya = 1;
                 deadTime = 100;
-
+                if(GlobalOptions.limitedForwardModel_killShell) {
+        	    mario.die();
+        	}
                 return true;
             }
         }

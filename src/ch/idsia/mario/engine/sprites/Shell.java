@@ -1,6 +1,7 @@
 package ch.idsia.mario.engine.sprites;
 
 import ch.idsia.mario.engine.Art;
+import ch.idsia.mario.engine.GlobalOptions;
 import ch.idsia.mario.engine.LevelScene;
 
 
@@ -317,7 +318,7 @@ public class Shell extends Sprite
         deadTime = 100;
     }
 
-    public boolean shellCollideCheck(Shell shell)
+    public boolean shellCollideCheck(Shell shell, Mario mario)
     {
         if (deadTime != 0) return false;
 
@@ -335,6 +336,9 @@ public class Shell extends Sprite
 
                 die();
                 shell.die();
+                if(GlobalOptions.limitedForwardModel_killShell) {
+        	    mario.die();
+        	}
                 return true;
             }
         }

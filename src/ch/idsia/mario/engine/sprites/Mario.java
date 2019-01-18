@@ -71,11 +71,12 @@ public class Mario extends Sprite {
     public boolean[] cheatKeys;
     private float runTime;
     boolean wasOnGround = false;
-    boolean onGround = false;
-    private boolean mayJump = false;
+    boolean onGround = true;
+    private boolean mayJump = true;
     private boolean ducking = false;
     private boolean sliding = false;
     private int jumpTime = 0;
+    private int prevJumpTime = 0;
     private float xJumpSpeed;
     private float yJumpSpeed;
     private boolean canShoot = false;
@@ -111,6 +112,8 @@ public class Mario extends Sprite {
 	if (GlobalOptions.MarioCeiling) {
 	    y = 8;
 	}
+	xa = 0;
+        ya = 3;
 
 	facing = 1;
 	setLarge(Mario.large, Mario.fire);
@@ -347,8 +350,17 @@ public class Mario extends Sprite {
 	}
 
 	onGround = false;
+	if(GlobalOptions.limitedForwardModel_killRun && Math.abs(xa) > 6) {
+	    this.die();
+	    return;
+	}
+	if(GlobalOptions.limitedForwardModel_killHighJump && prevJumpTime < 3 && prevJumpTime > 0 && jumpTime == 0) {
+	    this.die();
+	    return;
+	}
 	move(xa, 0);
 	move(0, ya);
+	prevJumpTime = jumpTime;
 
 	if (y > world.level.height * 16 + 16) {
 	    die();
@@ -519,7 +531,6 @@ public class Mario extends Sprite {
 	    else
 		sliding = false;
 	}
-
 	if (collide) {
 	    if (xa < 0) {
 		x = (int) ((x - width) / 16) * 16 + width;
@@ -557,7 +568,7 @@ public class Mario extends Sprite {
 	byte block = world.level.getBlock(x, y);
 
 	if (((Level.TILE_BEHAVIORS[block & 0xff]) & Level.BIT_PICKUPABLE) > 0) {
-	    Mario.getCoin();
+	    Mario.getCoin(this);
 	    world.level.setBlock(x, y, (byte) 0);
 	    for (int xx = 0; xx < 2; xx++)
 		for (int yy = 0; yy < 2; yy++)
@@ -573,6 +584,10 @@ public class Mario extends Sprite {
     }
 
     public void stomp(Enemy enemy) {
+	if(GlobalOptions.limitedForwardModel_killStomp) {
+	    die();
+	    return;
+	}
 	if (deathTime > 0 || world.paused)
 	    return;
 
@@ -589,6 +604,10 @@ public class Mario extends Sprite {
     }
 
     public void stomp(Shell shell) {
+	if(GlobalOptions.limitedForwardModel_killStomp) {
+	    die();
+	    return;
+	}
 	if (deathTime > 0 || world.paused)
 	    return;
 
@@ -672,6 +691,10 @@ public class Mario extends Sprite {
     }
 
     public void getFlower() {
+	if(GlobalOptions.limitedForwardModel_killMushroom) {
+	    die();
+	    return;
+	}
 	if (deathTime > 0 || world.paused)
 	    return;
 
@@ -680,12 +703,16 @@ public class Mario extends Sprite {
 	    powerUpTime = 3 * FractionalPowerUpTime;
 	    world.mario.setLarge(true, true);
 	} else {
-	    Mario.getCoin();
+	    Mario.getCoin(this);
 	}
 	++gainedFlowers;
     }
 
     public void getMushroom() {
+	if(GlobalOptions.limitedForwardModel_killMushroom) {
+	    die();
+	    return;
+	}
 	if (deathTime > 0 || world.paused)
 	    return;
 
@@ -694,7 +721,7 @@ public class Mario extends Sprite {
 	    powerUpTime = 3 * FractionalPowerUpTime;
 	    world.mario.setLarge(true, false);
 	} else {
-	    Mario.getCoin();
+	    Mario.getCoin(this);
 	}
 	++gainedMushrooms;
     }
@@ -711,6 +738,10 @@ public class Mario extends Sprite {
     }
 
     public void stomp(BulletBill bill) {
+	if(GlobalOptions.limitedForwardModel_killStomp) {
+	    die();
+	    return;
+	}
 	if (deathTime > 0 || world.paused)
 	    return;
 
@@ -745,7 +776,11 @@ public class Mario extends Sprite {
 	lives++;
     }
 
-    public static void getCoin() {
+    public static void getCoin(Mario mario) {
+	if(GlobalOptions.limitedForwardModel_killCoin) {
+	    mario.die();
+	    return;
+	}
 	coins++;
 	if (coins % 100 == 0)
 	    get1Up();
