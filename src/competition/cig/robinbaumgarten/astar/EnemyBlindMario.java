@@ -235,15 +235,19 @@ public class EnemyBlindMario
     
     private int getMarioDamage()
     {
-    	// early damage at gaps: Don't even fall 1 px into them.
-    	if (levelScene.level.isGap[(int) (levelScene.mario.x/16)] &&
-    			levelScene.mario.y > levelScene.level.gapHeight[(int) (levelScene.mario.x/16)]*16)
-    	{
-    		//System.out.println("Gap height: "+levelScene.level.gapHeight[(int) (levelScene.mario.x/16)]);
-    		levelScene.mario.damage+=5;
-    	}
-//    	return levelScene.mario.damage;
-		return 0;
+	// early damage at gaps: Don't even fall 1 px into them.
+		if (levelScene.mario.status != Mario.STATUS_WIN 
+			&& (GlobalOptions.SceneGeneration && (int)(levelScene.mario.x / 16) < 20)
+			&& levelScene.level.isGap[Math.min(levelScene.level.width - 1, Math.max(0, (int) (levelScene.mario.x / 16)))]
+			&& levelScene.mario.y > levelScene.level.gapHeight[Math.max(0, (int) (levelScene.mario.x / 16))] * 16) {
+		    // System.out.println("Gap height: "+levelScene.level.gapHeight[(int)
+		    // (levelScene.mario.x/16)]);
+		    levelScene.mario.damage += 5;
+		}
+		if(GlobalOptions.SceneGeneration && levelScene.mario.x / 16 >= 20) {
+		    return 0;
+		}
+		return levelScene.mario.damage;
     }
 
     
@@ -310,7 +314,7 @@ public class EnemyBlindMario
     		{
     			bestPosition = current;
     			if (current.sceneSnapshot.mario.x > furthestPosition.sceneSnapshot.mario.x
-    					&& !levelScene.level.isGap[(int)(current.sceneSnapshot.mario.x/16)])
+    					&& !levelScene.level.isGap[Math.min(levelScene.level.width - 1, Math.max(0, (int)(current.sceneSnapshot.mario.x/16)))])
     					//&& current.sceneSnapshot.mario.isOnGround())
     				furthestPosition = current;
     		}
@@ -318,7 +322,7 @@ public class EnemyBlindMario
     	if (levelScene.mario.x - currentSearchStartingMarioXPos < maxRight
     			&& furthestPosition.sceneSnapshot.mario.x > bestPosition.sceneSnapshot.mario.x + 20
     			&& (levelScene.mario.fire ||
-    					levelScene.level.isGap[(int)(bestPosition.sceneSnapshot.mario.x/16)]))
+    					levelScene.level.isGap[Math.min(levelScene.level.width - 1, Math.max(0, (int)(bestPosition.sceneSnapshot.mario.x/16)))]))
     	{
     		// Couldnt plan till end of screen, take furthest
     		//System.out.println("Furthest: "+ furthestPosition.sceneSnapshot.mario.x + " best: "+ bestPosition.sceneSnapshot.mario.x);
@@ -456,16 +460,16 @@ public class EnemyBlindMario
     		//if (current.action[Mario.KEY_JUMP]) jumpModifier = -0.0001f;
     		if (current.sceneSnapshot != null)
     		{
-    			int marioX = (int) current.sceneSnapshot.mario.x / 16;
-    			if (current.sceneSnapshot.level.isGap.length > marioX && current.sceneSnapshot.level.isGap[marioX])
-    			{
+//    			int marioX = (int) current.sceneSnapshot.mario.x / 16;
+//    			if (current.sceneSnapshot.level.isGap.length > marioX && current.sceneSnapshot.level.isGap[marioX])
+//    			{
     				//if (current.action[Mario.KEY_JUMP])
     				//	jumpModifier -= 5f;
     				//if (current.action[Mario.KEY_RIGHT])
         			//	jumpModifier -= 0.5f;
     				//if (current.action[Mario.KEY_SPEED])
         			//	jumpModifier -= 5f;
-    			}
+//    			}
     		}
     		
     		//if (current.sceneSnapshot != null && current.sceneSnapshot.mario.y > 200) jumpModifier += 0.001f * (300-current.sceneSnapshot.mario.y);

@@ -35,16 +35,23 @@ public class RunLimitedAgentsLevel {
         this._appendingSize = appendingSize;
     }
     public AgentResultObject runLevel(boolean ignorePipes) {
+	GlobalOptions.limitedForwardModel_killCoin = false;
+        GlobalOptions.limitedForwardModel_killHighJump = false;
+        GlobalOptions.limitedForwardModel_killMushroom = false;
+        GlobalOptions.limitedForwardModel_killRun = false;
+        GlobalOptions.limitedForwardModel_killShell = false;
+        GlobalOptions.limitedForwardModel_killStomp = false;
+        
 	Agent perfectAgent = new AStarAgent();
         Agent limitedAgent = new DoNothingAgent();
         if(this._parameters != null) {
-            if(this._parameters.get("agentType") == "LimitedJump") {
+            if(this._parameters.get("agentType").trim().toLowerCase().equals("limitedjump")) {
         	limitedAgent = new LimitedJumpAgent();
             }
-            if(this._parameters.get("agentType") == "EnemyBlind") {
+            if(this._parameters.get("agentType").trim().toLowerCase().equals("enemyblind")) {
         	limitedAgent = new EnemyBlindAgent();
             }
-            if(this._parameters.get("agentType") == "NoRun") {
+            if(this._parameters.get("agentType").trim().toLowerCase().equals("norun")) {
         	limitedAgent = new NoBButtonAgent();
             }
         }

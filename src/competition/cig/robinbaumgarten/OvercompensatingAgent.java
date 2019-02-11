@@ -14,8 +14,8 @@ public class OvercompensatingAgent implements Agent
     protected String name = "RobinBaumgarten_OvercompAgent";
     private AStarSimulator sim;
     private int tickCounter = 0;
-    private float lastX = 0;
-    private float lastY = 0;
+    private float lastX = 8;
+    private float lastY = 207;
 	int errCount = 0;
 	OvercompensatingAgent errAgent;
         int ocompBuffer = 0; //counts # of actions between each overcompensation action
@@ -23,7 +23,7 @@ public class OvercompensatingAgent implements Agent
     public void reset()
     {
         action = new boolean[Environment.numberOfButtons];
-        sim = new AStarSimulator(1500, 15);
+        sim = new AStarSimulator();
     }
     
     public void printLevel(byte[][] levelScene)

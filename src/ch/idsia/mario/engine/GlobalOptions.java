@@ -24,6 +24,7 @@ public class GlobalOptions {
 
     public static boolean VisualizationOn = false;
     public static boolean MarioCeiling = false;
+    public static boolean SceneGeneration = false;
     public static boolean GameVeiwerOn = true;
 
 

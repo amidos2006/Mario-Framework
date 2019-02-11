@@ -324,6 +324,7 @@ public class Mario extends Sprite implements Cloneable
 
         if (x > world.level.xExit * 16)
         {
+            x = world.level.width * 16;
             win();
         }
 

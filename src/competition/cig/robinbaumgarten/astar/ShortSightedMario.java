@@ -234,14 +234,14 @@ public class ShortSightedMario
     
     private int getMarioDamage()
     {
-    	// early damage at gaps: Don't even fall 1 px into them.
-    	if (levelScene.level.isGap[(int) (levelScene.mario.x/16)] &&
-    			levelScene.mario.y > levelScene.level.gapHeight[(int) (levelScene.mario.x/16)]*16)
-    	{
-    		//System.out.println("Gap height: "+levelScene.level.gapHeight[(int) (levelScene.mario.x/16)]);
-    		levelScene.mario.damage+=5;
-    	}
-    	return levelScene.mario.damage;
+	// early damage at gaps: Don't even fall 1 px into them.
+		if (levelScene.level.isGap[Math.max(0, (int) (levelScene.mario.x / 16))]
+			&& levelScene.mario.y > levelScene.level.gapHeight[Math.max(0, (int) (levelScene.mario.x / 16))] * 16) {
+		    // System.out.println("Gap height: "+levelScene.level.gapHeight[(int)
+		    // (levelScene.mario.x/16)]);
+		    levelScene.mario.damage += 5;
+		}
+		return levelScene.mario.damage;
     }
     
 

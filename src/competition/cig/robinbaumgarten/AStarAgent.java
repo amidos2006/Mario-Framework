@@ -1,7 +1,6 @@
 package competition.cig.robinbaumgarten;
 
 import ch.idsia.ai.agents.Agent;
-import ch.idsia.mario.engine.GlobalOptions;
 import ch.idsia.mario.environments.Environment;
 
 import competition.cig.robinbaumgarten.astar.AStarSimulator;
@@ -23,8 +22,7 @@ public class AStarAgent implements Agent {
 
     public void reset() {
 	action = new boolean[Environment.numberOfButtons];
-	int width = 1500; int height = 15;
-	sim = new AStarSimulator(width, height);
+	sim = new AStarSimulator();
     }
 
     // public void printLevel(byte[][] levelScene)

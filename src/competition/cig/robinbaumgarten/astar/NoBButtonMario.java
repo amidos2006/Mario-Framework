@@ -46,6 +46,8 @@ public class NoBButtonMario {
 	public int distanceFromOrigin = 0;
 	public boolean hasBeenHurt = false;
 	public boolean isInVisitedList = false;
+	public double marioX = 0;
+	public double marioXA = 0;
 
 	boolean[] action;
 	int repetitions = 1;
@@ -71,10 +73,19 @@ public class NoBButtonMario {
 	public SearchNode(boolean[] action, int repetitions, SearchNode parent) {
 	    this.parentPos = parent;
 	    if (parent != null) {
+		this.marioX = levelScene.mario.x;
+		this.marioXA = levelScene.mario.xa;
 		this.remainingTimeEstimated = parent.estimateRemainingTimeChild(action, repetitions);
+		if(this.remainingTimeEstimated >= 8000) {
+//		    System.out.println("Hello");
+		}
 		this.distanceFromOrigin = parent.distanceFromOrigin + 1;
-	    } else
+	    } else {
 		this.remainingTimeEstimated = calcRemainingTime(levelScene.mario.x, 0);
+		if(this.remainingTimeEstimated >= 8000) {
+//		    System.out.println("Hello");
+		}
+	    }
 	    this.action = action;
 	    this.repetitions = repetitions;
 	    if (parent != null)
@@ -109,6 +120,9 @@ public class NoBButtonMario {
 	    }
 	    remainingTime = calcRemainingTime(levelScene.mario.x, levelScene.mario.xa)
 		    + (getMarioDamage() - initialDamage) * (1000000 - 100 * distanceFromOrigin);
+//	    if(getMarioDamage() - initialDamage > 0) {
+//		System.out.println("Hello");
+//	    }
 	    if (isInVisitedList)
 		remainingTime += visitedListPenalty;
 	    hasBeenHurt = (getMarioDamage() - initialDamage) != 0;
@@ -214,20 +228,25 @@ public class NoBButtonMario {
 
     private int getMarioDamage() {
 	// early damage at gaps: Don't even fall 1 px into them.
-	if (levelScene.level.isGap[(int) (levelScene.mario.x / 16)]
-		&& levelScene.mario.y > levelScene.level.gapHeight[(int) (levelScene.mario.x / 16)] * 16) {
-	    // System.out.println("Gap height: "+levelScene.level.gapHeight[(int)
-	    // (levelScene.mario.x/16)]);
-	    levelScene.mario.damage += 5;
-	}
-	return levelScene.mario.damage;
+		if (levelScene.mario.status != Mario.STATUS_WIN 
+			&& (GlobalOptions.SceneGeneration && (int)(levelScene.mario.x / 16) < 20)
+			&& levelScene.level.isGap[Math.min(levelScene.level.width - 1, Math.max(0, (int) (levelScene.mario.x / 16)))]
+			&& levelScene.mario.y > levelScene.level.gapHeight[Math.max(0, (int) (levelScene.mario.x / 16))] * 16) {
+		    // System.out.println("Gap height: "+levelScene.level.gapHeight[(int)
+		    // (levelScene.mario.x/16)]);
+		    levelScene.mario.damage += 5;
+		}
+		if(GlobalOptions.SceneGeneration && levelScene.mario.x / 16 >= 20) {
+		    return 0;
+		}
+		return levelScene.mario.damage;
     }
 
     private void search(long startTime) {
 	SearchNode current = bestPosition;
 	// SearchNode furthest = bestPosition;
 	boolean currentGood = false;
-	int ticks = 0;
+//	int ticks = 0;
 	int maxRight = 176;
 	while (posPool.size() != 0
 		// && ((levelScene.mario.x - currentSearchStartingMarioXPos < maxRight) ||
@@ -237,8 +256,12 @@ public class NoBButtonMario {
 		&& (System.currentTimeMillis() - startTime < Math.min(200, timeBudget / 2)))
 	// && ticks < 200)
 	{
-	    ticks++;
+//	    ticks++;
 	    current = pickBestPos(posPool);
+//	    System.out.println(printAction(current.action));
+	    if (current == null) {
+		return;
+	    }
 	    currentGood = false;
 	    float realRemainingTime = current.simulatePos();
 
@@ -280,19 +303,26 @@ public class NoBButtonMario {
 		posPool.addAll(current.generateChildren());
 	    }
 	    if (currentGood) {
+//		System.out.println("Good");
+//		if(current.action[0]) {
+//		    System.out.println("Before: " + bestPosition.sceneSnapshot.mario.x);
+//		    System.out.println("After: " + current.sceneSnapshot.mario.x);
+//		}
 		bestPosition = current;
+		
 		if (current.sceneSnapshot.mario.x > furthestPosition.sceneSnapshot.mario.x
-			&& !levelScene.level.isGap[(int) (current.sceneSnapshot.mario.x / 16)])
+			&& !levelScene.level.isGap[Math.min(levelScene.level.width - 1, Math.max(0, (int) (current.sceneSnapshot.mario.x / 16)))])
 		    // && current.sceneSnapshot.mario.isOnGround())
 		    furthestPosition = current;
 	    }
 	}
 	if (levelScene.mario.x - currentSearchStartingMarioXPos < maxRight
 		&& furthestPosition.sceneSnapshot.mario.x > bestPosition.sceneSnapshot.mario.x + 20
-		&& (levelScene.mario.fire || levelScene.level.isGap[(int) (bestPosition.sceneSnapshot.mario.x / 16)])) {
+		&& (levelScene.mario.fire || levelScene.level.isGap[Math.min(levelScene.level.width - 1, Math.max(0, (int) (bestPosition.sceneSnapshot.mario.x / 16)))])) {
 	    // Couldnt plan till end of screen, take furthest
 	    // System.out.println("Furthest: "+ furthestPosition.sceneSnapshot.mario.x + "
 	    // best: "+ bestPosition.sceneSnapshot.mario.x);
+//	    System.out.println("Furthest");
 	    bestPosition = furthestPosition;
 	}
 
@@ -393,6 +423,10 @@ public class NoBButtonMario {
 	return s;
     }
 
+    /**
+     * @param posPool
+     * @return
+     */
     private SearchNode pickBestPos(ArrayList<SearchNode> posPool) {
 	SearchNode bestPos = null;
 	float bestPosCost = 10000000;
@@ -401,15 +435,15 @@ public class NoBButtonMario {
 	    float jumpModifier = 0;
 	    // if (current.action[Mario.KEY_JUMP]) jumpModifier = -0.0001f;
 	    if (current.sceneSnapshot != null) {
-		int marioX = (int) current.sceneSnapshot.mario.x / 16;
-		if (current.sceneSnapshot.level.isGap.length > marioX && current.sceneSnapshot.level.isGap[marioX]) {
-		    // if (current.action[Mario.KEY_JUMP])
+//		int marioX = Math.max(0, (int) current.sceneSnapshot.mario.x / 16);
+//		if (marioX >= 0 && marioX < current.sceneSnapshot.level.isGap.length && current.sceneSnapshot.level.isGap[marioX]) {
+//		    // if (current.action[Mario.KEY_JUMP])
 		    // jumpModifier -= 5f;
 		    // if (current.action[Mario.KEY_RIGHT])
 		    // jumpModifier -= 0.5f;
 		    // if (current.action[Mario.KEY_SPEED])
 		    // jumpModifier -= 5f;
-		}
+//		}
 	    }
 
 	    // if (current.sceneSnapshot != null && current.sceneSnapshot.mario.y > 200)
@@ -418,18 +452,31 @@ public class NoBButtonMario {
 													 // bias towards
 													 // furthest
 													 // positions
-	    // System.out.println("Looking at pos with elapsed time "+current.timeElapsed+"
-	    // est time: "
-	    // + current.getRemainingTime() + " actions: " + printAction(current.action));
+//	    System.out.println(printAction(current.action) + " " + currentCost + " " + current.timeElapsed);
+//	     System.out.println("Looking at pos with elapsed time "+current.timeElapsed+"est time: "
+//	     + current.getRemainingTime() + " actions: " + printAction(current.action));
 	    if (currentCost < bestPosCost) {
 		bestPos = current;
 		bestPosCost = currentCost;
 	    }
 	}
+//	System.out.println("###############");
+//	if(bestPos.action[0]) {
+//	    for (SearchNode current : posPool) {
+//		String hey = "";
+//		if(bestPos == current) {
+//		    hey = "its me: ";
+//		}
+//		float currentCost = current.getRemainingTime() + current.timeElapsed * 0.90f;
+//		System.out.println(hey + printAction(current.action) + " " + current.marioX + " " + current.marioXA + " " + current.remainingTimeEstimated + " " + (current.remainingTimeEstimated == current.remainingTime) + " " + current.timeElapsed);
+//	    }
+//	}
 	posPool.remove(bestPos);
-	// System.out.println("Best Pos: elapsed time "+bestPos.timeElapsed+" est time:
-	// "
-	// + bestPos.getRemainingTime() + " actions: " + printAction(bestPos.action));
+	
+//	 System.out.println("Best Pos: elapsed time "+bestPos.timeElapsed+" est time:"
+//	 + bestPos.getRemainingTime() + " actions: " + printAction(bestPos.action));
+//	 System.out.println("###############");
+	 
 	return bestPos;
     }
 
@@ -501,9 +548,11 @@ public class NoBButtonMario {
 	    startSearch(stepsPerSearch);
 	    ticksBeforeReplanning = planAhead;
 	}
+//	System.out.println("After: " + currentActionPlan.size());
 	restoreState(workScene);
 	search(startTime);
 	workScene = backupState();
+//	System.out.println("End: " + currentActionPlan.size());
 
 	boolean[] action = new boolean[5];
 	if (currentActionPlan.size() > 0)
@@ -515,6 +564,7 @@ public class NoBButtonMario {
 	// if ((e-startTime) > 40) System.out.println("Overtime warning:
 	// "+(e-startTime));
 	restoreState(currentState);
+//	System.out.println(requireReplanning);
 	return action;
     }
 

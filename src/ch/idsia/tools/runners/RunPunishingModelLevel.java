@@ -31,6 +31,13 @@ public class RunPunishingModelLevel {
         this._appendingSize = appendingSize;
     }
     public AgentResultObject runLevel(boolean ignorePipes) {
+	GlobalOptions.limitedForwardModel_killCoin = false;
+        GlobalOptions.limitedForwardModel_killHighJump = false;
+        GlobalOptions.limitedForwardModel_killMushroom = false;
+        GlobalOptions.limitedForwardModel_killRun = false;
+        GlobalOptions.limitedForwardModel_killShell = false;
+        GlobalOptions.limitedForwardModel_killStomp = false;
+        
 	Agent perfectAgent = new AStarAgent();
         Level lvl = Level.initializeLevel(_level, _appendingSize, ignorePipes);
         CmdLineOptions options = optionSetup(false);

@@ -2,7 +2,6 @@ package competition.cig.robinbaumgarten;
 
 import ch.idsia.ai.agents.Agent;
 import ch.idsia.mario.environments.Environment;
-import competition.cig.robinbaumgarten.astar.AStarSimulator;
 import competition.cig.robinbaumgarten.astar.NoBButtonMario;
 import competition.cig.robinbaumgarten.astar.sprites.Mario;
 
@@ -55,7 +54,7 @@ public class NoBButtonAgent implements Agent
 
 		boolean[] ac = new boolean[5];
 		ac[Mario.KEY_RIGHT] = true;
-		ac[Mario.KEY_SPEED] = true;
+		ac[Mario.KEY_SPEED] = false;
 
 		//byte[][] scene = observation.getCompleteObservation();//observation.getLevelSceneObservation(0);
 		byte[][] scene = observation.getLevelSceneObservationZ(0);

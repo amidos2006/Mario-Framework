@@ -34,6 +34,13 @@ public class RunMapEliteLevel {
     }
     
     public EvaluationInfo runLevel(boolean ignorePipes) {
+	GlobalOptions.limitedForwardModel_killCoin = false;
+        GlobalOptions.limitedForwardModel_killHighJump = false;
+        GlobalOptions.limitedForwardModel_killMushroom = false;
+        GlobalOptions.limitedForwardModel_killRun = false;
+        GlobalOptions.limitedForwardModel_killShell = false;
+        GlobalOptions.limitedForwardModel_killStomp = false;
+        
         Level lvl = Level.initializeLevel(level, appendingSize, ignorePipes);
         CmdLineOptions options = optionSetup(true);
         Agent ai = new DoNothingAgent();

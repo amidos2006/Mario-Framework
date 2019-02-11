@@ -2,7 +2,6 @@ package competition.cig.robinbaumgarten;
 
 import ch.idsia.ai.agents.Agent;
 import ch.idsia.mario.environments.Environment;
-import competition.cig.robinbaumgarten.astar.AStarSimulator;
 import competition.cig.robinbaumgarten.astar.LimitedJumpMario;
 import competition.cig.robinbaumgarten.astar.sprites.Mario;
 

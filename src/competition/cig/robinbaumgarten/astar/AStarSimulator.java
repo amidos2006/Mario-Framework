@@ -2,8 +2,8 @@ package competition.cig.robinbaumgarten.astar;
 
 import java.util.ArrayList;
 
+import ch.idsia.mario.engine.GlobalOptions;
 import competition.cig.robinbaumgarten.astar.sprites.Mario;
-
 import competition.cig.robinbaumgarten.astar.level.Level;
 
 public class AStarSimulator {
@@ -36,6 +36,9 @@ public class AStarSimulator {
 	private int timeElapsed = 0;
 	public float remainingTimeEstimated = 0;
 	private float remainingTime = 0;
+	public float marioX;
+	public float marioLateX;
+	public float marioXA;
 
 	public SearchNode parentPos = null;
 	public SearchNode chosenChild = null;
@@ -68,6 +71,8 @@ public class AStarSimulator {
 	public SearchNode(boolean[] action, int repetitions, SearchNode parent) {
 	    this.parentPos = parent;
 	    if (parent != null) {
+		this.marioX = levelScene.mario.x;
+		this.marioXA = levelScene.mario.xa;
 		this.remainingTimeEstimated = parent.estimateRemainingTimeChild(action, repetitions);
 		this.distanceFromOrigin = parent.distanceFromOrigin + 1;
 	    } else
@@ -107,10 +112,16 @@ public class AStarSimulator {
 		    debugPos = 0;
 	    }
 //	    System.out.println("After " + printAction(action) + ":" + initialDamage + " " + getMarioDamage());
+//	    System.out.println(levelScene.timeLeft / 15);
+	    
+	    this.marioLateX = levelScene.mario.x;
 	    remainingTime = calcRemainingTime(levelScene.mario.x, levelScene.mario.xa)
 		    + (getMarioDamage() - initialDamage) * (1000000 - 100 * distanceFromOrigin);
 	    if (isInVisitedList)
 		remainingTime += visitedListPenalty;
+//	    if(getMarioDamage() - initialDamage > 0 || levelScene.mario.status == Mario.STATUS_DEAD || remainingTime > 8000) {
+//		System.out.println("Hello");
+//	    }
 	    hasBeenHurt = (getMarioDamage() - initialDamage) != 0;
 	    sceneSnapshot = backupState();
 
@@ -129,8 +140,8 @@ public class AStarSimulator {
 
     }
 
-    public AStarSimulator(int width, int height) {
-	initialiseSimulator(width, height);
+    public AStarSimulator() {
+	initialiseSimulator();
     }
 
     public boolean canJumpHigher(SearchNode currentPos, boolean checkParent) {
@@ -212,11 +223,16 @@ public class AStarSimulator {
 
     private int getMarioDamage() {
 	// early damage at gaps: Don't even fall 1 px into them.
-	if (levelScene.level.isGap[Math.max(0, (int) (levelScene.mario.x / 16))]
+	if (levelScene.mario.status != Mario.STATUS_WIN 
+		&& (GlobalOptions.SceneGeneration && (int)(levelScene.mario.x / 16) < 20)
+		&& levelScene.level.isGap[Math.min(levelScene.level.width - 1, Math.max(0, (int) (levelScene.mario.x / 16)))]
 		&& levelScene.mario.y > levelScene.level.gapHeight[Math.max(0, (int) (levelScene.mario.x / 16))] * 16) {
 	    // System.out.println("Gap height: "+levelScene.level.gapHeight[(int)
 	    // (levelScene.mario.x/16)]);
 	    levelScene.mario.damage += 5;
+	}
+	if(GlobalOptions.SceneGeneration && levelScene.mario.x / 16 >= 20) {
+	    return 0;
 	}
 	return levelScene.mario.damage;
     }
@@ -255,6 +271,9 @@ public class AStarSimulator {
 		    System.out.print("V");
 		realRemainingTime += visitedListPenalty;
 		current.isInVisitedList = true;
+//		if(realRemainingTime > 8000) {
+//		    System.out.println(realRemainingTime + " " + current.remainingTime);
+//		}
 		current.remainingTime = realRemainingTime;
 		current.remainingTimeEstimated = realRemainingTime;
 		/*
@@ -284,7 +303,7 @@ public class AStarSimulator {
 	    if (currentGood) {
 		bestPosition = current;
 		if (current.sceneSnapshot.mario.x > furthestPosition.sceneSnapshot.mario.x
-			&& !levelScene.level.isGap[Math.max(0, (int) (current.sceneSnapshot.mario.x / 16))])
+			&& !levelScene.level.isGap[Math.min(levelScene.level.width - 1, Math.max(0, (int) (current.sceneSnapshot.mario.x / 16)))])
 		    // && current.sceneSnapshot.mario.isOnGround())
 		    furthestPosition = current;
 	    }
@@ -292,7 +311,7 @@ public class AStarSimulator {
 	if (levelScene.mario.x - currentSearchStartingMarioXPos < maxRight
 		&& furthestPosition.sceneSnapshot.mario.x > bestPosition.sceneSnapshot.mario.x + 20
 		&& (levelScene.mario.fire
-			|| levelScene.level.isGap[Math.max(0, (int) (bestPosition.sceneSnapshot.mario.x / 16))])) {
+			|| levelScene.level.isGap[Math.min(levelScene.level.width - 1, Math.max(0, (int) (bestPosition.sceneSnapshot.mario.x / 16)))])) {
 	    // Couldnt plan till end of screen, take furthest
 	    // System.out.println("Furthest: "+ furthestPosition.sceneSnapshot.mario.x + "
 	    // best: "+ bestPosition.sceneSnapshot.mario.x);
@@ -406,15 +425,15 @@ public class AStarSimulator {
 	    float jumpModifier = 0;
 	    // if (current.action[Mario.KEY_JUMP]) jumpModifier = -0.0001f;
 	    if (current.sceneSnapshot != null) {
-		int marioX = Math.max(0, (int) current.sceneSnapshot.mario.x / 16);
-		if (current.sceneSnapshot.level.isGap.length > marioX && current.sceneSnapshot.level.isGap[marioX]) {
+//		int marioX = Math.max(0, (int) current.sceneSnapshot.mario.x / 16);
+//		if (current.sceneSnapshot.level.isGap.length > marioX && current.sceneSnapshot.level.isGap[marioX]) {
 		    // if (current.action[Mario.KEY_JUMP])
 		    // jumpModifier -= 5f;
 		    // if (current.action[Mario.KEY_RIGHT])
 		    // jumpModifier -= 0.5f;
 		    // if (current.action[Mario.KEY_SPEED])
 		    // jumpModifier -= 5f;
-		}
+//		}
 	    }
 
 	    // if (current.sceneSnapshot != null && current.sceneSnapshot.mario.y > 200)
@@ -431,6 +450,17 @@ public class AStarSimulator {
 		bestPosCost = currentCost;
 	    }
 	}
+//	System.out.println("###############");
+//	if(bestPos.action[0]) {
+//	    for (SearchNode current : posPool) {
+//		String hey = "";
+//		if(bestPos == current) {
+//		    hey = "its me: ";
+//		}
+//		float currentCost = current.getRemainingTime() + current.timeElapsed * 0.90f;
+//		System.out.println(hey + printAction(current.action) + " " + current.marioX + " " + current.marioXA + " " + current.marioLateX + " " + currentCost + " " + current.timeElapsed);
+//	    }
+//	}
 	posPool.remove(bestPos);
 	// System.out.println("Best Pos: elapsed time "+bestPos.timeElapsed+" est time:
 	// "
@@ -438,10 +468,10 @@ public class AStarSimulator {
 	return bestPos;
     }
 
-    public void initialiseSimulator(int width, int height) {
+    public void initialiseSimulator() {
 	levelScene = new LevelScene();
 	levelScene.init();
-	levelScene.level = new Level(width, height);
+	levelScene.level = new Level(1500, 15);
     }
 
     public void setLevelPart(byte[][] levelPart, float[] enemies) {
