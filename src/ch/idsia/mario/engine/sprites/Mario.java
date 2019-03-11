@@ -18,6 +18,7 @@ public class Mario extends Sprite {
     public static int gainedMushrooms;
     public static int gainedFlowers;
     public static boolean isMarioInvulnerable;
+    
 
     public static void resetStatic(int marioMode) {
 	large = marioMode > 0;
@@ -97,6 +98,8 @@ public class Mario extends Sprite {
     public float startX = -1;
     public float startY = -1;
     public float minY = -1;
+    public int breakBlock;
+    public int coinBlock;
 
     public Sprite carried = null;
     private static Mario instance;

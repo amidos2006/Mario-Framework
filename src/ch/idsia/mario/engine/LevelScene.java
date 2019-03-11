@@ -1156,6 +1156,7 @@ public class LevelScene extends Scene implements SpriteContext
             }
             else
             {
+        	mario.coinBlock += 1;
                 Mario.getCoin(mario);
                 addSprite(new CoinAnim(x, y));
             }
@@ -1166,6 +1167,7 @@ public class LevelScene extends Scene implements SpriteContext
             bumpInto(x, y - 1);
             if (canBreakBricks)
             {
+        	mario.breakBlock += 1;
                 level.setBlock(x, y, (byte) 0);
                 for (int xx = 0; xx < 2; xx++)
                     for (int yy = 0; yy < 2; yy++)

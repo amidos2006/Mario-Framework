@@ -16,6 +16,8 @@ public class EvaluationInfo
     public static final int MagicNumberUndef = -42;
     public int levelType = MagicNumberUndef;
     public int marioStatus = MagicNumberUndef;
+    public int breakBlock = MagicNumberUndef;
+    public int coinBlock = MagicNumberUndef;
     public int livesLeft = MagicNumberUndef;
     public double lengthOfLevelPassedPhys = MagicNumberUndef;
     public int lengthOfLevelPassedCells = MagicNumberUndef;

@@ -274,6 +274,8 @@ public class MarioComponent extends JComponent implements Runnable, /*KeyListene
         evaluationInfo.totalActionsPerfomed = totalActionsPerfomed; // Counted during the play/simulation process
         evaluationInfo.totalFramesPerfomed = frame;
         evaluationInfo.marioMode = mario.getMode();
+        evaluationInfo.breakBlock = mario.breakBlock;
+        evaluationInfo.coinBlock = mario.coinBlock;
         evaluationInfo.shellKills = LevelScene.killedCreaturesByShell;
         evaluationInfo.stompKills = LevelScene.killedCreaturesByStomp;
         evaluationInfo.fireKills = LevelScene.killedCreaturesByFireBall;
